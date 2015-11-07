@@ -108,6 +108,10 @@ Seeder.prototype.populateModels = function(seedData) {
 			return;
 		}
 
+		//HZ EDIT: Get a count of all the documents so we can close the connection when its done
+		var count = 0;
+		for(var i=0; i < seedData.length; i++){ count += seedData[i].documents.length; }
+
 		// Populate each model
 		seedData.forEach(function(entry) {
 			var Model = mongoose.model(entry.model);
@@ -119,6 +123,10 @@ Seeder.prototype.populateModels = function(seedData) {
 						return;
 					}
 					console.log('Successfully created document [' + j + '] of ' + entry.model + ' model');
+
+					//HZ EDIT: decrement count and close connection if all done
+					count--;
+					if (count == 0) mongoose.connection.close();
 				});
 			});
 		});
